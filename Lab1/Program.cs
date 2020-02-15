@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Lab1
 {
@@ -13,49 +15,54 @@ namespace Lab1
 
         const int minRandomValue = -10;
         const int maxRandomValue = 10;
-        const int vectorLength = 10_000_000;
+
+        const string path = "results.csv";
+        static StreamWriter streamWriter;
 
         static void Main(string[] args)
         {
-            var vector = CreateArrayWithRandomValues(vectorLength);
+            File.Create(path).Close();
+            streamWriter = new StreamWriter(path, true);
+            streamWriter.WriteLine("Method,Vector length,Result,Time,Speedup factor,Efficiency");
 
-            var timeSequential = SequentialAlgorithmTest(vector);
+            foreach (int vectorLength in new[] { 1_000, 10_000, 10_000_000 })
+            {
+                var vector = CreateArrayWithRandomValues(vectorLength);
+                var timeSequential = SequentialAlgorithmTest(vector);
 
-            var timeParallel = ParallelAlgorithmTest(vector, 4);
+                ParallelAlgorithmTest(vector, timeSequential, 2);
+                ParallelAlgorithmTest(vector, timeSequential, 4);
+                ParallelAlgorithmTest(vector, timeSequential, 8);
+            }
 
-            double diff = timeSequential - timeParallel;
-            Console.WriteLine($"\nDiff(ms) = {diff} ({diff / timeSequential * 100} %)");
-
-
-            Console.ReadKey();
+            streamWriter.Close();
         }
 
         static long SequentialAlgorithmTest(int[] vector)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            var stopwatch = Stopwatch.StartNew();
 
             int result = CalculateNorm(vector);
 
             stopwatch.Stop();
 
-            PrintStats("Sequential", stopwatch.ElapsedMilliseconds, result);
+            LogResults("Sequential", vector.Length, stopwatch.ElapsedTicks, result);
 
-            return stopwatch.ElapsedMilliseconds;
+            return stopwatch.ElapsedTicks;
         }
 
-        static long ParallelAlgorithmTest(int[] vector, int numOfThreads)
+        static void ParallelAlgorithmTest(int[] vector, long timeSequential, int threads)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            var stopwatch = Stopwatch.StartNew();
 
-            int result = CalculateNormParallel(vector, numOfThreads);
+            int result = CalculateNormParallel(vector, threads);
 
             stopwatch.Stop();
 
-            PrintStats($"Parallel (num of threads = {numOfThreads})", stopwatch.ElapsedMilliseconds, result);
+            double speedupFactor = (double)timeSequential / stopwatch.ElapsedTicks;
+            double efficiency = speedupFactor / threads;
 
-            return stopwatch.ElapsedMilliseconds;
+            LogResults($"Parallel {threads} threads", vector.Length, stopwatch.ElapsedTicks, result, speedupFactor, efficiency);
         }
 
         static int[] CreateArrayWithRandomValues(int size)
@@ -80,13 +87,13 @@ namespace Lab1
             int result = 0;
             int partSize = vector.Length / numOfThreads;
 
-            Task[] tasks = new Task[numOfThreads];
+            var threads = new Thread[numOfThreads];
 
             for (int i = 0; i < numOfThreads; i++)
             {
                 int ii = i;
 
-                tasks[ii] = Task.Run(() =>
+                threads[ii] = new Thread(() =>
                 {
                     int localResult = 0;
                     for (int j = ii * partSize; j < (ii + 1) * partSize; j++)
@@ -95,20 +102,21 @@ namespace Lab1
                     }
                     Interlocked.Add(ref result, localResult);
                 });
+                threads[ii].Start();
             }
 
-            Task.WaitAll(tasks);
+            foreach (var thread in threads)
+                thread.Join();
 
             return result;
         }
 
-        static void PrintStats(string algorithmName, long time, int result)
+        static void LogResults(string algorithmName, int vectorLength, long time, int result, double speedupFactor = 1.0, double efficiency = 1.0)
         {
-            Console.WriteLine();
-            Console.WriteLine(algorithmName);
-            Console.WriteLine($"Time: {time}");
-            Console.WriteLine($"Result = {result}");
-            Console.WriteLine();
+            string log = $"{algorithmName},{vectorLength},{result},{time},{speedupFactor.ToString("0.00", CultureInfo.InvariantCulture)},{efficiency.ToString("0.00", CultureInfo.InvariantCulture)}";
+
+            streamWriter.WriteLine(log);
         }
+
     }
 }
