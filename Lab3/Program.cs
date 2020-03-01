@@ -10,7 +10,7 @@ namespace Lab3
     {
         static void Main(string[] args)
         {
-            var arr = CreateArrayWithRandomValues(1_000_000);
+            var arr = CreateArrayOfRandomValues(1_000_000);
 
             Console.WriteLine(CountOfItemsByCond(arr, x => x > 0));
             Console.WriteLine("-----------");
@@ -83,7 +83,7 @@ namespace Lab3
             return checksum;
         }
 
-        static int[] CreateArrayWithRandomValues(int size)
+        static int[] CreateArrayOfRandomValues(int size)
         {
             var random = new Random();
             var arr = new int[size];

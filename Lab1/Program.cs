@@ -27,7 +27,7 @@ namespace Lab1
 
             foreach (int vectorLength in new[] { 1_000, 10_000, 10_000_000 })
             {
-                var vector = CreateArrayWithRandomValues(vectorLength);
+                var vector = CreateArrayOfRandomValues(vectorLength);
                 var timeSequential = SequentialAlgorithmTest(vector);
 
                 ParallelAlgorithmTest(vector, timeSequential, 2);
@@ -65,7 +65,7 @@ namespace Lab1
             LogResults($"Parallel {threads} threads", vector.Length, stopwatch.ElapsedTicks, result, speedupFactor, efficiency);
         }
 
-        static int[] CreateArrayWithRandomValues(int size)
+        static int[] CreateArrayOfRandomValues(int size)
         {
             var arr = new int[size];
 
