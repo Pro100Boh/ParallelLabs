@@ -13,7 +13,7 @@ namespace Lab4
 	{
 		static void Main(string[] args)
 		{
-			SimulateSleepingBarber();
+			SimulateDiningPhilosophers();
 		}
 
 		public static void SimulateProducerConsumer()
@@ -62,8 +62,8 @@ namespace Lab4
 
 			foreach (var philosopher in philosophers)
 			{
-				philosopher.LeftFork = philosopher.LeftPhilosopher.RightFork ?? new Fork();
-				philosopher.RightFork = philosopher.RightPhilosopher.LeftFork ?? new Fork();
+				philosopher.LeftFork = philosopher.LeftPhilosopher.RightFork ?? new Semaphore(1, 1);
+				philosopher.RightFork = philosopher.RightPhilosopher.LeftFork ?? new Semaphore(1, 1);
 			}
 
 			var philosopherThreads = new Thread[philosophers.Length];
