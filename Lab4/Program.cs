@@ -14,10 +14,13 @@ namespace Lab4
 	{
 		static void Main(string[] args)
 		{
-			SimulateReadersWriters();
+			TestProducerConsumer();
+			//TestDiningPhilosophers();
+			//TestSleepingBarber();
+			//TestReadersWriters();
 		}
 
-		public static void SimulateProducerConsumer()
+		public static void TestProducerConsumer()
 		{
 			var queue = new ConcurrentQueue<int>();
 
@@ -44,7 +47,7 @@ namespace Lab4
 				consumer.Start();
 			}
 
-			while (!queue.IsEmpty || producers.Any(p => p.Producing)) ;
+			while (!queue.IsEmpty || producers.Any(p => p.Producing));
 
 			foreach (var consumer in consumers)
 			{
@@ -53,7 +56,7 @@ namespace Lab4
 
 		}
 
-		public static void SimulateDiningPhilosophers()
+		public static void TestDiningPhilosophers()
 		{
 			var philosophers = new Philosopher[5];
 			for (int i = 0; i < philosophers.Length; i++)
@@ -81,7 +84,7 @@ namespace Lab4
 			}
 		}
 
-		public static void SimulateSleepingBarber()
+		public static void TestSleepingBarber()
 		{
 			var random = new Random();
 			var queue = new ConcurrentQueue<Client>();
@@ -98,7 +101,7 @@ namespace Lab4
 			thread.Join();
 		}
 
-		public static void SimulateReadersWriters()
+		public static void TestReadersWriters()
 		{
 			var storage = new Storage();
 
