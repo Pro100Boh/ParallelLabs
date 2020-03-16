@@ -19,7 +19,9 @@ namespace Lab5
 			var arr1 = arr1Task.Result;
 			var arr2 = arr2Task.Result;
 
-			var arr3 = arr1.Intersect(arr2).OrderBy(x => x).ToArray();
+			var arr3 = arr1.AsParallel().Intersect(arr2.AsParallel()).OrderBy(x => x).ToArray();
+
+			PrintCollection(arr3);
 		}
 
 		static int[] GetFirstArray(int size)
@@ -28,7 +30,7 @@ namespace Lab5
 
 			double val = 0.6 * arr.Max();
 
-			arr = arr.Where(x => x > val).OrderBy(x => x).ToArray();
+			arr = arr.AsParallel().Where(x => x > val).OrderBy(x => x).ToArray();
 
 			return arr;
 		}
@@ -37,7 +39,7 @@ namespace Lab5
 		{
 			var arr = CreateArrayOfRandomValues(size);
 
-			arr = arr.Where(x => x % 2 == 0).OrderBy(x => x).ToArray();
+			arr = arr.AsParallel().Where(x => x % 2 == 0).OrderBy(x => x).ToArray();
 
 			return arr;
 		}
