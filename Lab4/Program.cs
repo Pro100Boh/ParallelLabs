@@ -1,5 +1,6 @@
 ﻿using Lab4.DiningPhilosophers;
 using Lab4.ProducerConsumer;
+using Lab4.ReadersWriters;
 using Lab4.SleepingBarber;
 using System;
 using System.Collections.Concurrent;
@@ -13,7 +14,7 @@ namespace Lab4
 	{
 		static void Main(string[] args)
 		{
-			SimulateDiningPhilosophers();
+			SimulateReadersWriters();
 		}
 
 		public static void SimulateProducerConsumer()
@@ -95,6 +96,23 @@ namespace Lab4
 			}
 
 			thread.Join();
+		}
+
+		public static void SimulateReadersWriters()
+		{
+			var storage = new Storage();
+
+			for (int i = 0; i < 256; ++i)
+			{
+				if (i % 50 == 0)
+				{
+					new Writer(storage).Start();
+				}
+				else
+				{
+					new Reader(storage).Start();
+				}
+			}
 		}
 	}
 }
