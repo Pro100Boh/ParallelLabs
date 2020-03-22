@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lab4.SleepingBarber
 {
-	class Client
+	public class Client
 	{
 		public string Name { get; private set; }
 

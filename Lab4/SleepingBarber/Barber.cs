@@ -9,9 +9,9 @@ namespace Lab4.SleepingBarber
 	class Barber
 	{
 		private static readonly Random _random = new Random();
-		private readonly ConcurrentQueue<Client> _queue;
+		private readonly BarbershopQueue _queue;
 
-		public Barber(ConcurrentQueue<Client> queue)
+		public Barber(BarbershopQueue queue)
 		{
 			_queue = queue;
 		}
@@ -20,7 +20,7 @@ namespace Lab4.SleepingBarber
 		{
 			while (!_queue.IsEmpty)
 			{
-				_queue.TryDequeue(out var client);
+				_queue.TryGet(out var client);
 
 				Console.WriteLine($"Started hair cutting to {client.Name}");
 

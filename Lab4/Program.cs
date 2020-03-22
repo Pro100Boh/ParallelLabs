@@ -87,7 +87,7 @@ namespace Lab4
 		public static void TestSleepingBarber()
 		{
 			var random = new Random();
-			var queue = new ConcurrentQueue<Client>();
+			var queue = new BarbershopQueue(3);
 			var barber = new Barber(queue);
 			var thread = new Thread(barber.CutHair);
 			thread.Start();
@@ -95,7 +95,7 @@ namespace Lab4
 			for (int i = 0; i < 50; i++)
 			{
 				Thread.Sleep(random.Next(0, 100));
-				queue.Enqueue(new Client($"client #{i}"));
+				queue.Put(new Client($"client #{i}"));
 			}
 
 			thread.Join();
