@@ -1,8 +1,7 @@
-﻿using System;
+﻿using MPI;
+using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using MPI;
 
 class Hello
 {
@@ -29,17 +28,12 @@ class Hello
 
             int loacalResult = vectorPart.Sum(Math.Abs);
 
+            int result = communicator.Reduce(loacalResult, Operation<int>.Add, 0);
+
             if (rank == 0)
             {
-                int result = Enumerable.Range(1, size - 1).Select(i => communicator.Receive<int>(i, 0)).Sum();
-                result += loacalResult;
-
                 Console.WriteLine($"Result = {result}");
                 Console.WriteLine($"Time = {stopwatch.ElapsedTicks}");
-            }
-            else
-            {
-                communicator.Send(loacalResult, 0, 0);
             }
         });
     }
