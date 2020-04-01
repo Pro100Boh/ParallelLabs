@@ -5,6 +5,9 @@ namespace Lab9.Send
 {
 	public sealed class RabbitMQSendService : IDisposable
 	{
+		private readonly IConnection _connection;
+		private readonly IModel _channel;
+
 		public RabbitMQSendService()
 		{
 			var factory = new ConnectionFactory() { HostName = "localhost" };
@@ -18,11 +21,6 @@ namespace Lab9.Send
 						arguments: null);
 		}
 
-		public static RabbitMQSendService Instance { get; } = new RabbitMQSendService();
-
-		private readonly IConnection _connection;
-		private readonly IModel _channel;
-
 		public void Send(byte[] body)
 		{
 			_channel.BasicPublish(
@@ -34,8 +32,11 @@ namespace Lab9.Send
 
 		public void Dispose()
 		{
-			_connection.Close();
-			_channel.Close();
+			if (_connection != null)
+				_connection.Close();
+
+			if (_channel != null)
+				_channel.Close();
 		}
 	}
 }

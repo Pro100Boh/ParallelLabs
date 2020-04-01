@@ -7,25 +7,24 @@ namespace Lab9
 {
 	public enum Handy
 	{
-		[EnumMember(Value = "OneHanded")]
 		OneHanded,
-		[EnumMember(Value = "TwoHanded")]
 		TwoHanded,
 	}
 
 	public enum ShootingDistance
 	{
-		[EnumMember(Value = "Short")]
 		Short,
-		[EnumMember(Value = "Middle")]
 		Middle,
-		[EnumMember(Value = "Long")]
 		Long
 	}
 
 	[Serializable]
 	public class TTC
 	{
+		public int? Id { get; set; }
+
+		public int? GunId { get; set; }
+
 		[Required]
 		[Range(0, 2)]
 		public ShootingDistance? ShootingDistance { get; set; }
@@ -44,6 +43,8 @@ namespace Lab9
 	[Serializable]
 	public class Gun
 	{
+		public int? Id { get; set; }
+
 		[Required]
 		public string Model { get; set; }
 

@@ -6,11 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.30" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.1" />
+    <PackageReference Include="protobuf-net" Version="2.4.4" />
     <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Lab9\Lab9.csproj" />
   </ItemGroup>
 
 </Project>

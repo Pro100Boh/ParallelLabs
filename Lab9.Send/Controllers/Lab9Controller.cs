@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using ProtoBuf;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Lab9.Send.Controllers
 {
@@ -17,6 +16,7 @@ namespace Lab9.Send.Controllers
 		}
 
 		[HttpGet("gun")]
+		[Produces("application/xml")]
 		public IActionResult Get()
 		{
 			return Ok(new Gun
@@ -25,34 +25,25 @@ namespace Lab9.Send.Controllers
 				Handy = Handy.TwoHanded,
 				Origin = "USA",
 				Material = "Steel",
-				TTCs = new List<TTC>
-				{
-					new TTC
-					{
-						ShootingDistance = ShootingDistance.Middle,
-						EffectiveFiringRange = 1000,
-						HasClip = false,
-						HasSights = false
-					}
-				}
-
+				ShootingDistance = ShootingDistance.Middle,
+				EffectiveFiringRange = 1000,
+				HasClip = false,
+				HasSights = false
 			});
 		}
 
 		[HttpPost("gun")]
+		[Consumes("application/xml")]
 		public IActionResult Post(Gun gun)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest();
-
 			using (var ms = new MemoryStream())
 			{
-				new BinaryFormatter().Serialize(ms, gun);
-				_sendService.Send(ms.ToArray());
+				Serializer.Serialize(ms, gun);
+				byte[] body = ms.ToArray();
+				_sendService.Send(body);
 			}
 
 			return Ok();
-
 		}
 	}
 }
