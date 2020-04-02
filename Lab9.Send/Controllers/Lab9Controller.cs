@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProtoBuf;
+using System;
 using System.IO;
 
 namespace Lab9.Send.Controllers
@@ -8,7 +9,9 @@ namespace Lab9.Send.Controllers
 	[Route("api/lab9")]
 	public class Lab9Controller : ControllerBase
 	{
-		private RabbitMQSendService _sendService;
+		private static readonly Random _random = new Random();
+
+		private readonly RabbitMQSendService _sendService;
 
 		public Lab9Controller(RabbitMQSendService sendService)
 		{
@@ -21,14 +24,14 @@ namespace Lab9.Send.Controllers
 		{
 			return Ok(new Gun
 			{
-				Model = "a1b2c3",
-				Handy = Handy.TwoHanded,
-				Origin = "USA",
-				Material = "Steel",
-				ShootingDistance = ShootingDistance.Middle,
-				EffectiveFiringRange = 1000,
-				HasClip = false,
-				HasSights = false
+				Model = Guid.NewGuid().ToString().Substring(0, 6).ToUpper(),
+				Handy = (Handy)_random.Next(0, 2),
+				Origin = new[] { "USA", "Germany", "France" }[_random.Next(0, 3)],
+				Material = new[] { "Steel", "Aluminum", "Plastic" }[_random.Next(0, 3)],
+				ShootingDistance = (ShootingDistance)_random.Next(0, 3),
+				EffectiveFiringRange = _random.Next(1, 51) * 100,
+				HasClip = _random.Next(0, 2) == 0,
+				HasSights = _random.Next(0, 2) == 0
 			});
 		}
 

@@ -1,17 +1,14 @@
-﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using ProtoBuf;
+﻿using ProtoBuf;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
-using System.Data;
 using System.IO;
 
 namespace Lab9.Receive
 {
 	class Program
 	{
-		private const string _connectionString = "Data Source=DESKTOP-MD9SQKS;Initial Catalog=lab9db;Integrated Security=True";
+		private static readonly GunsRepository _gunsRepository = new GunsRepository("Data Source=DESKTOP-MD9SQKS;Initial Catalog=lab9db;Integrated Security=True");
 
 		public static void Main()
 		{
@@ -48,19 +45,13 @@ namespace Lab9.Receive
 				{
 					var gun = Serializer.Deserialize<Gun>(ms);
 
-					Console.WriteLine("Received new object: ");
+					Console.WriteLine("Received new object: \n");
 
 					PrintGunObject(gun);
 
-					using (IDbConnection db = new SqlConnection(_connectionString))
-					{
-						string sqlQuery = "INSERT INTO Guns (Model, Handy, Origin, Material, ShootingDistance, EffectiveFiringRange, HasClip, HasSights) " +
-							"VALUES(@Model, @Handy, @Origin, @Material, @ShootingDistance, @EffectiveFiringRange, @HasClip, @HasSights)";
+					_gunsRepository.Add(gun);
 
-						db.Execute(sqlQuery, gun);
-					}
-
-					Console.WriteLine("\nObject saved in Db");
+					Console.WriteLine("\nObject saved in Db.");
 				}
 			}
 			catch (Exception ex)
